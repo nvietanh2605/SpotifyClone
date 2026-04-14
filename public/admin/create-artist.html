@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexagon - Create Artist</title>
+    <!-- Link to admin styles -->
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="admin-navbar">
+        <a href="admin.html" class="logo">HEXAGON</a>
+        <span class="admin-label">Admin Dashboard</span>
+        <button class="logout-btn" id="logoutBtn">Log Out</button>
+    </nav>
+
+    <!-- ==================== LAYOUT ==================== -->
+    <div class="admin-layout">
+
+        <!-- ==================== SIDEBAR ==================== -->
+        <aside class="admin-sidebar">
+            <p class="sidebar-title">Manage</p>
+            <a href="admin.html" class="sidebar-link">Song List</a>
+            <a href="create-artist.html" class="sidebar-link active">Create Artist</a>
+            <a href="upload-song.html" class="sidebar-link">Upload Song</a>
+            <a href="create-playlist.html" class="sidebar-link">Create Playlist</a>
+        </aside>
+
+        <!-- ==================== MAIN CONTENT ==================== -->
+        <main class="admin-main">
+
+            <!-- Page title -->
+            <h1 class="page-title">Create Artist</h1>
+
+            <!-- Success and error messages -->
+            <div class="alert alert-success" id="successAlert"></div>
+            <div class="alert alert-error" id="errorAlert"></div>
+
+            <!-- Create artist form -->
+            <div class="admin-form">
+
+                <!-- Artist name -->
+                <div class="form-group">
+                    <label for="artistName">Artist Name</label>
+                    <input
+                        type="text"
+                        id="artistName"
+                        placeholder="Enter artist name"
+                    />
+                </div>
+
+                <!-- Artist description -->
+                <div class="form-group">
+                    <label for="artistDescription">Description</label>
+                    <textarea
+                        id="artistDescription"
+                        placeholder="Enter a short description of the artist"
+                    ></textarea>
+                </div>
+
+                <!-- Artist profile image -->
+                <div class="form-group">
+                    <label for="artistImage">Profile Image</label>
+                    <input
+                        type="file"
+                        id="artistImage"
+                        accept="image/*"
+                    />
+                    <!-- Image preview -->
+                    <img class="image-preview" id="imagePreview" src="" alt="Preview"/>
+                </div>
+
+                <!-- Submit button -->
+                <button class="btn-primary" id="createArtistBtn">Create Artist</button>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Link to artists JavaScript -->
+    <script src="../js/admin/artists.js"></script>
+
+</body>
+</html>
