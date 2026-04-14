@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexagon - Register</title>
+    <!-- Link to auth styles -->
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+    <!-- Main register container -->
+    <div class="auth-container">
+
+        <!-- Logo -->
+        <div class="auth-logo">
+            <h1>HEXAGON</h1>
+        </div>
+
+        <!-- Title -->
+        <h2 class="auth-title">Create an account</h2>
+
+        <!-- Error message (hidden by default) -->
+        <div class="auth-error" id="errorMessage"></div>
+
+        <!-- Success message (hidden by default) -->
+        <div class="auth-success" id="successMessage"></div>
+
+        <!-- Register form -->
+        <div class="auth-form">
+
+            <!-- Name field -->
+            <div class="form-group">
+                <label for="name">Full name</label>
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Full name"
+                    autocomplete="name"
+                />
+            </div>
+
+            <!-- Email field -->
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Email address"
+                    autocomplete="email"
+                />
+            </div>
+
+            <!-- Password field -->
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
+                    autocomplete="new-password"
+                />
+            </div>
+
+            <!-- Submit button -->
+            <button class="auth-btn" id="registerBtn">Sign Up</button>
+
+        </div>
+
+        <!-- Divider -->
+        <hr class="auth-divider">
+
+        <!-- Redirect to login -->
+        <p class="auth-redirect">
+            Already have an account?
+            <a href="login.html">Login here</a>
+        </p>
+
+    </div>
+
+    <!-- Link to auth JavaScript -->
+    <script src="js/auth.js"></script>
+
+</body>
+</html>

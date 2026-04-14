@@ -1,0 +1,8 @@
+# Node modules (too large to push)
+node_modules/
+
+# Environment variables (contains sensitive info)
+.env
+
+# Uploaded files (too large to push)
+uploads/

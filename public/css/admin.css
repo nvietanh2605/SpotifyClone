@@ -1,0 +1,517 @@
+/* ==================== GLOBAL RESET ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ==================== BODY ==================== */
+body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: 'Circular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+}
+
+/* ==================== ADMIN NAVBAR ==================== */
+.admin-navbar {
+    background-color: #000000;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    height: 64px;
+}
+
+.admin-navbar .logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1db954;
+    letter-spacing: 2px;
+    text-decoration: none;
+}
+
+.admin-navbar .admin-label {
+    font-size: 14px;
+    color: #b3b3b3;
+    background-color: #282828;
+    padding: 4px 12px;
+    border-radius: 50px;
+}
+
+.admin-navbar .logout-btn {
+    background: none;
+    border: 1px solid #535353;
+    border-radius: 50px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 20px;
+    transition: border-color 0.2s;
+}
+
+.admin-navbar .logout-btn:hover {
+    border-color: #ffffff;
+}
+
+/* ==================== ADMIN LAYOUT ==================== */
+.admin-layout {
+    display: flex;
+    margin-top: 64px;
+    min-height: calc(100vh - 64px);
+}
+
+/* ==================== SIDEBAR ==================== */
+.admin-sidebar {
+    background-color: #000000;
+    width: 220px;
+    min-height: calc(100vh - 64px);
+    padding: 24px 0;
+    position: fixed;
+    top: 64px;
+    left: 0;
+    bottom: 0;
+}
+
+.admin-sidebar .sidebar-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #b3b3b3;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0 24px;
+    margin-bottom: 8px;
+}
+
+.admin-sidebar .sidebar-link {
+    display: block;
+    color: #b3b3b3;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 24px;
+    transition: color 0.2s;
+    border-left: 3px solid transparent;
+}
+
+.admin-sidebar .sidebar-link:hover {
+    color: #ffffff;
+}
+
+.admin-sidebar .sidebar-link.active {
+    color: #ffffff;
+    border-left-color: #1db954;
+}
+
+/* ==================== ADMIN MAIN CONTENT ==================== */
+.admin-main {
+    margin-left: 220px;
+    padding: 32px;
+    width: calc(100% - 220px);
+}
+
+/* ==================== PAGE TITLE ==================== */
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #ffffff;
+}
+
+/* ==================== ACTION BUTTONS ==================== */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    background-color: #1db954;
+    border: none;
+    border-radius: 50px;
+    color: #000000;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px 24px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-primary:hover {
+    background-color: #1ed760;
+    transform: scale(1.02);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    border: 1px solid #535353;
+    border-radius: 50px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 24px;
+    text-decoration: none;
+    display: inline-block;
+    transition: border-color 0.2s;
+}
+
+.btn-secondary:hover {
+    border-color: #ffffff;
+}
+
+.btn-danger {
+    background-color: #e91429;
+    border: none;
+    border-radius: 50px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 24px;
+    transition: background-color 0.2s;
+}
+
+.btn-danger:hover {
+    background-color: #ff1f38;
+}
+
+/* ==================== SEARCH BAR ==================== */
+.search-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.search-bar input {
+    background-color: #282828;
+    border: 1px solid #535353;
+    border-radius: 50px;
+    color: #ffffff;
+    font-size: 14px;
+    padding: 12px 20px;
+    width: 100%;
+    max-width: 400px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.search-bar input:focus {
+    border-color: #ffffff;
+}
+
+.search-bar button {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    color: #000000;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px 24px;
+    transition: background-color 0.2s;
+}
+
+.search-bar button:hover {
+    background-color: #b3b3b3;
+}
+
+/* ==================== SONGS TABLE ==================== */
+.songs-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+}
+
+.songs-table th {
+    color: #b3b3b3;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #282828;
+}
+
+.songs-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #282828;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.songs-table tr:hover {
+    background-color: #282828;
+    cursor: pointer;
+}
+
+.songs-table tr.selected {
+    background-color: #1db95420;
+    border-left: 3px solid #1db954;
+}
+
+.songs-table .song-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.songs-table .song-name {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.songs-table .song-artist {
+    color: #b3b3b3;
+}
+
+.songs-table .song-streams {
+    color: #b3b3b3;
+}
+
+/* ==================== FORM STYLES ==================== */
+.admin-form {
+    background-color: #282828;
+    border-radius: 8px;
+    padding: 32px;
+    max-width: 600px;
+}
+
+.admin-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.admin-form .form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.admin-form .form-group input,
+.admin-form .form-group select,
+.admin-form .form-group textarea {
+    background-color: #3e3e3e;
+    border: 1px solid #535353;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 14px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+}
+
+.admin-form .form-group input:focus,
+.admin-form .form-group select:focus,
+.admin-form .form-group textarea:focus {
+    border-color: #ffffff;
+}
+
+.admin-form .form-group select option {
+    background-color: #282828;
+}
+
+.admin-form .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* File upload button */
+.admin-form .form-group input[type="file"] {
+    padding: 8px;
+    cursor: pointer;
+}
+
+/* ==================== IMAGE PREVIEW ==================== */
+.image-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    object-fit: cover;
+    display: none;
+    margin-top: 8px;
+}
+
+.image-preview.visible {
+    display: block;
+}
+
+/* ==================== NOTIFICATION MESSAGES ==================== */
+.alert {
+    border-radius: 4px;
+    font-size: 14px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.alert.visible {
+    display: block;
+}
+
+.alert-success {
+    background-color: #1db954;
+    color: #000000;
+    font-weight: 600;
+}
+
+.alert-error {
+    background-color: #e91429;
+    color: #ffffff;
+}
+
+/* ==================== MODAL (DELETE CONFIRMATION) ==================== */
+.modal-overlay {
+    background-color: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    display: none;
+}
+
+.modal-overlay.visible {
+    display: flex;
+}
+
+.modal {
+    background-color: #282828;
+    border-radius: 8px;
+    padding: 32px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
+.modal h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.modal p {
+    color: #b3b3b3;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* ==================== PLAYLIST BUILDER ==================== */
+.playlist-builder {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.playlist-search-results,
+.playlist-songs-list {
+    background-color: #282828;
+    border-radius: 8px;
+    padding: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.playlist-search-results h3,
+.playlist-songs-list h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #b3b3b3;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+/* Each song result row */
+.song-result-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.song-result-row:hover {
+    background-color: #3e3e3e;
+}
+
+.song-result-row .song-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.song-result-row img {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.song-result-row .song-name {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.song-result-row .song-artist {
+    font-size: 12px;
+    color: #b3b3b3;
+}
+
+.song-result-row .add-btn {
+    background-color: #1db954;
+    border: none;
+    border-radius: 50px;
+    color: #000000;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 14px;
+    transition: background-color 0.2s;
+}
+
+.song-result-row .add-btn:hover {
+    background-color: #1ed760;
+}
+
+.song-result-row .remove-btn {
+    background-color: transparent;
+    border: 1px solid #535353;
+    border-radius: 50px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 6px 14px;
+    transition: border-color 0.2s;
+}
+
+.song-result-row .remove-btn:hover {
+    border-color: #e91429;
+    color: #e91429;
+}
