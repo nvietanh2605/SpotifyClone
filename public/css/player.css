@@ -1,0 +1,218 @@
+/* ==================== MUSIC PLAYER BAR ==================== */
+/* Fixed bar at the bottom of the screen */
+.player {
+    grid-area: player;
+    background-color: #181818;
+    border-top: 1px solid #282828;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    height: 90px;
+    z-index: 50;
+}
+
+/* ==================== LEFT SIDE - SONG INFO ==================== */
+.player-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 280px;
+    min-width: 180px;
+}
+
+.player-left img {
+    width: 56px;
+    height: 56px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.player-song-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+}
+
+.player-song-name {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.player-song-name:hover {
+    text-decoration: underline;
+}
+
+.player-song-artist {
+    color: #b3b3b3;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.player-song-artist:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+/* ==================== CENTER - CONTROLS ==================== */
+.player-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    max-width: 600px;
+}
+
+/* Play, pause, skip buttons */
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.control-btn {
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    cursor: pointer;
+    font-size: 20px;
+    transition: color 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.control-btn:hover {
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+/* Play/pause button is larger than other buttons */
+.play-btn {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    color: #000000;
+    cursor: pointer;
+    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+.play-btn:hover {
+    transform: scale(1.05);
+    background-color: #f0f0f0;
+}
+
+/* Progress bar row */
+.player-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.player-time {
+    color: #b3b3b3;
+    font-size: 11px;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* The progress bar track */
+.progress-bar {
+    flex: 1;
+    height: 4px;
+    background-color: #535353;
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    transition: height 0.1s;
+}
+
+.progress-bar:hover {
+    height: 6px;
+}
+
+/* The filled part of the progress bar */
+.progress-fill {
+    height: 100%;
+    background-color: #ffffff;
+    border-radius: 2px;
+    pointer-events: none;
+    transition: width 0.1s linear;
+}
+
+.progress-bar:hover .progress-fill {
+    background-color: #1db954;
+}
+
+/* ==================== RIGHT SIDE - VOLUME ==================== */
+.player-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 180px;
+    justify-content: flex-end;
+}
+
+.volume-btn {
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    cursor: pointer;
+    font-size: 18px;
+    transition: color 0.2s;
+}
+
+.volume-btn:hover {
+    color: #ffffff;
+}
+
+/* Volume slider */
+.volume-bar {
+    width: 93px;
+    height: 4px;
+    background-color: #535353;
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+}
+
+.volume-bar:hover {
+    height: 6px;
+}
+
+.volume-fill {
+    height: 100%;
+    background-color: #ffffff;
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.volume-bar:hover .volume-fill {
+    background-color: #1db954;
+}
+
+/* ==================== EMPTY PLAYER STATE ==================== */
+/* Shown when no song is selected */
+.player-empty {
+    color: #b3b3b3;
+    font-size: 13px;
+    text-align: center;
+    width: 100%;
+}

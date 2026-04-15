@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexagon - Home</title>
+    <!-- Link to main and player styles -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/player.css">
+</head>
+<body>
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar">
+
+        <!-- Top section - logo and navigation -->
+        <div class="sidebar-top">
+            <a href="index.html" class="sidebar-logo">HEXAGON</a>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="active">
+                    <span>&#9750;</span>
+                    Home
+                </a>
+                <a href="search.html">
+                    <span>&#9906;</span>
+                    Search
+                </a>
+            </nav>
+        </div>
+
+        <!-- Bottom section - library -->
+        <div class="sidebar-library">
+            <div class="library-header">
+                <h2>Your Library</h2>
+                <button id="createPlaylistBtn" title="Create Playlist">+</button>
+            </div>
+
+            <!-- Library items will be loaded here by library.js -->
+            <div id="libraryItems"></div>
+
+        </div>
+
+    </aside>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="main-content">
+
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="navbar-left">
+                <button class="nav-arrow" onclick="history.back()">&#8592;</button>
+                <button class="nav-arrow" onclick="history.forward()">&#8594;</button>
+            </div>
+            <div class="navbar-right">
+
+                <!-- Notification bell -->
+                <div class="notification-wrapper">
+                    <button class="bell-btn" id="bellBtn">&#9825;</button>
+                    <span class="notification-badge" id="notificationBadge">0</span>
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-dropdown-header">Notifications</div>
+                        <div id="notificationList"></div>
+                    </div>
+                </div>
+
+                <!-- Settings dropdown -->
+                <div class="settings-wrapper">
+                    <button class="settings-btn" id="settingsBtn">
+                        <span class="user-name" id="userName">User</span>
+                        <div class="user-avatar" id="userAvatar">U</div>
+                    </button>
+                    <div class="settings-dropdown" id="settingsDropdown">
+                        <a href="account.html">Account Details</a>
+                        <hr class="divider">
+                        <button id="logoutBtn">Log Out</button>
+                    </div>
+                </div>
+
+            </div>
+        </nav>
+
+        <!-- Home page content -->
+        <div class="home-content">
+
+            <!-- Hit Songs section -->
+            <h2 class="section-title">Hit Songs</h2>
+            <div class="cards-grid" id="hitSongsGrid">
+                <!-- Top 5 songs will be loaded here -->
+            </div>
+
+            <!-- Public playlists section -->
+            <h2 class="section-title">Featured Playlists</h2>
+            <div class="cards-grid" id="featuredPlaylistsGrid">
+                <!-- Public playlists will be loaded here -->
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ==================== MUSIC PLAYER ==================== -->
+    <div class="player">
+
+        <!-- Left - song info -->
+        <div class="player-left" id="playerLeft">
+            <div class="player-empty">Select a song to play</div>
+        </div>
+
+        <!-- Center - controls and progress bar -->
+        <div class="player-center" id="playerCenter" style="display: none;">
+            <div class="player-controls">
+                <button class="control-btn" id="prevBtn" title="Previous">&#9664;&#9664;</button>
+                <button class="play-btn" id="playBtn">&#9654;</button>
+                <button class="control-btn" id="nextBtn" title="Next">&#9654;&#9654;</button>
+            </div>
+            <div class="player-progress">
+                <span class="player-time" id="currentTime">0:00</span>
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <span class="player-time" id="totalTime">0:00</span>
+            </div>
+        </div>
+
+        <!-- Right - volume -->
+        <div class="player-right" id="playerRight" style="display: none;">
+            <button class="volume-btn" id="volumeBtn">&#9836;</button>
+            <div class="volume-bar" id="volumeBar">
+                <div class="volume-fill" id="volumeFill" style="width: 70%"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== LOGIN WALL POPUP ==================== -->
+    <div class="login-wall-overlay" id="loginWallOverlay">
+        <div class="login-wall-popup">
+            <div class="login-wall-text">
+                <h3>Start listening with our account</h3>
+                <p>Already have an account? <a href="login.html">Login here</a></p>
+            </div>
+            <div class="login-wall-buttons">
+                <a href="register.html" class="btn-signup">Sign up here</a>
+                <button class="btn-close" id="closeLoginWall">&#10005;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden audio element for playing songs -->
+    <audio id="audioPlayer"></audio>
+
+    <!-- Link to JavaScript files -->
+    <script src="js/player.js"></script>
+    <script src="js/library.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // ==================== HOME PAGE LOGIC ====================
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+        const name = localStorage.getItem('name');
+
+        // Set user name in navbar
+        if (name) {
+            document.getElementById('userName').textContent = name;
+            document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase();
+        }
+
+        // Settings dropdown toggle
+        document.getElementById('settingsBtn').addEventListener('click', () => {
+            document.getElementById('settingsDropdown').classList.toggle('visible');
+            document.getElementById('notificationDropdown').classList.remove('visible');
+        });
+
+        // Logout button
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            localStorage.removeItem('name');
+            window.location.href = 'login.html';
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.settings-wrapper')) {
+                document.getElementById('settingsDropdown').classList.remove('visible');
+            }
+            if (!e.target.closest('.notification-wrapper')) {
+                document.getElementById('notificationDropdown').classList.remove('visible');
+            }
+        });
+
+        // Close login wall popup
+        document.getElementById('closeLoginWall').addEventListener('click', () => {
+            document.getElementById('loginWallOverlay').classList.remove('visible');
+        });
+
+        // Create playlist button in library
+        document.getElementById('createPlaylistBtn').addEventListener('click', () => {
+            if (!token) {
+                document.getElementById('loginWallOverlay').classList.add('visible');
+                return;
+            }
+            window.location.href = 'playlist.html?action=create';
+        });
+
+        // ==================== LOAD HIT SONGS ====================
+        const loadHitSongs = async () => {
+            try {
+                const response = await fetch('/api/songs/top');
+                const songs = await response.json();
+                const grid = document.getElementById('hitSongsGrid');
+                grid.innerHTML = '';
+
+                songs.forEach(song => {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+                    card.innerHTML = `
+                        <img
+                            src="${song.image !== 'default-song.png' ? '/uploads/images/' + song.image : '/uploads/images/default-song.png'}"
+                            alt="${song.name}"
+                            onerror="this.src='/uploads/images/default-song.png'"
+                        />
+                        <div class="card-name">${song.name}</div>
+                        <div class="card-desc">${song.artist ? song.artist.name : 'Unknown'}</div>
+                    `;
+
+                    // Play song when card is clicked
+                    card.addEventListener('click', () => {
+                        if (!token) {
+                            document.getElementById('loginWallOverlay').classList.add('visible');
+                            return;
+                        }
+                        window.playSong(song);
+                    });
+
+                    grid.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error('Failed to load hit songs:', error);
+            }
+        };
+
+        // ==================== LOAD FEATURED PLAYLISTS ====================
+        const loadFeaturedPlaylists = async () => {
+            try {
+                const response = await fetch('/api/playlists/public');
+                const playlists = await response.json();
+                const grid = document.getElementById('featuredPlaylistsGrid');
+                grid.innerHTML = '';
+
+                if (playlists.length === 0) {
+                    grid.innerHTML = '<p style="color: #b3b3b3; font-size: 14px;">No featured playlists yet</p>';
+                    return;
+                }
+
+                playlists.forEach(playlist => {
+                    const card = document.createElement('a');
+                    card.classList.add('card');
+                    card.href = `playlist.html?id=${playlist._id}`;
+                    card.innerHTML = `
+                        <img
+                            src="${playlist.image !== 'default-playlist.png' ? '/uploads/images/' + playlist.image : '/uploads/images/default-playlist.png'}"
+                            alt="${playlist.name}"
+                            onerror="this.src='/uploads/images/default-playlist.png'"
+                        />
+                        <div class="card-name">${playlist.name}</div>
+                        <div class="card-desc">${playlist.songs.length} songs</div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error('Failed to load featured playlists:', error);
+            }
+        };
+
+        // ==================== INITIALIZE ====================
+        loadHitSongs();
+        loadFeaturedPlaylists();
+    </script>
+
+</body>
+</html>
