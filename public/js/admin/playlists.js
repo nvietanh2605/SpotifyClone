@@ -17,7 +17,7 @@ const showSuccess = (message) => {
     const alert = document.getElementById('successAlert');
     alert.textContent = message;
     alert.classList.add('visible');
-    setTimeout(() => alert.classList.remove('visible'), 3000);
+    setTimeout(() => alert.classList.remove('visible'), 6000);
 };
 
 // Show error alert message
@@ -26,6 +26,30 @@ const showError = (message) => {
     alert.textContent = message;
     alert.classList.add('visible');
     setTimeout(() => alert.classList.remove('visible'), 3000);
+};
+
+// ==================== LOAD ARTISTS INTO DROPDOWN ====================
+// Fetch all artists and populate the publisher dropdown
+const loadArtists = async () => {
+    try {
+        const response = await fetch('/api/artists', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const artists = await response.json();
+        const publisherSelect = document.getElementById('publisherSelect');
+
+        if (!publisherSelect) return;
+
+        // Add each artist as an option in the dropdown
+        artists.forEach(artist => {
+            const option = document.createElement('option');
+            option.value = artist._id;
+            option.textContent = artist.name;
+            publisherSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Failed to load artists:', error);
+    }
 };
 
 // ==================== IMAGE PREVIEW ====================
@@ -54,6 +78,7 @@ if (createPlaylistBtn) {
     createPlaylistBtn.addEventListener('click', async () => {
         // Get values from input fields
         const name = document.getElementById('playlistName').value.trim();
+        const publisher = document.getElementById('publisherSelect').value;
         const imageFile = document.getElementById('playlistImage').files[0];
 
         // Check if playlist name is provided
@@ -62,9 +87,16 @@ if (createPlaylistBtn) {
             return;
         }
 
+        // Check if publisher is selected
+        if (!publisher) {
+            showError('Please select a publisher artist');
+            return;
+        }
+
         // Create FormData to send text and file together
         const formData = new FormData();
         formData.append('name', name);
+        formData.append('publisher', publisher);
 
         // Only append image if one was selected
         if (imageFile) {
@@ -72,7 +104,7 @@ if (createPlaylistBtn) {
         }
 
         try {
-            // Disable button to prevent double submission
+            // Disable button and show loading state
             createPlaylistBtn.disabled = true;
             createPlaylistBtn.textContent = 'Creating...';
 
@@ -87,26 +119,33 @@ if (createPlaylistBtn) {
 
             if (!response.ok) {
                 showError(data.message);
+                // Re-enable button if there was an error
+                createPlaylistBtn.disabled = false;
+                createPlaylistBtn.textContent = 'Create Playlist';
                 return;
             }
 
             // Store the created playlist ID
             createdPlaylistId = data.playlist._id;
 
-            // Show success message
-            showSuccess('Playlist created successfully. Now add songs to it.');
-
-            // Show the playlist builder section
+            // Show the playlist builder section first
             document.getElementById('playlistBuilder').style.display = 'block';
 
-            // Disable the create form to prevent creating another playlist
+            // Show success notification after a short delay so it is visible
+            setTimeout(() => {
+                showSuccess('Playlist created successfully! Now add songs to it.');
+            }, 100);
+
+            // Permanently disable the create form to prevent creating another playlist
             createPlaylistBtn.disabled = true;
+            createPlaylistBtn.textContent = 'Playlist Created';
             document.getElementById('playlistName').disabled = true;
             document.getElementById('playlistImage').disabled = true;
+            document.getElementById('publisherSelect').disabled = true;
 
         } catch (error) {
             showError('Failed to create playlist. Please try again.');
-        } finally {
+            // Re-enable button if there was an error
             createPlaylistBtn.disabled = false;
             createPlaylistBtn.textContent = 'Create Playlist';
         }
@@ -289,3 +328,7 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
     localStorage.removeItem('name');
     window.location.href = '../login.html';
 });
+
+// ==================== INITIALIZE ====================
+// Load artists dropdown when page loads
+loadArtists();

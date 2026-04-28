@@ -1,14 +1,11 @@
 // Import mongoose to connect to MongoDB
 const mongoose = require('mongoose');
 
-// Load environment variables from .env file
-require('dotenv').config();
-
 // Function to connect to MongoDB
 const connectDB = async () => {
     try {
-        // Attempt to connect using the URI from .env file
-        await mongoose.connect(process.env.MONGODB_URI);
+        // Attempt to connect to local MongoDB
+        await mongoose.connect('mongodb://localhost:27017/hexagon');
 
         // If successful, log a confirmation message
         console.log('MongoDB connected successfully to Hexagon database');

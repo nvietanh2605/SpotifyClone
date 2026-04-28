@@ -26,6 +26,7 @@
             <a href="create-artist.html" class="sidebar-link">Create Artist</a>
             <a href="upload-song.html" class="sidebar-link">Upload Song</a>
             <a href="create-playlist.html" class="sidebar-link active">Create Playlist</a>
+            <a href="playlists.html" class="sidebar-link">Playlist List</a>
         </aside>
 
         <!-- ==================== MAIN CONTENT ==================== -->
@@ -61,6 +62,15 @@
                         id="playlistName"
                         placeholder="Enter playlist name"
                     />
+                </div>
+
+                <!-- Publisher artist dropdown -->
+                <div class="form-group">
+                    <label for="publisherSelect">Publisher Artist</label>
+                    <select id="publisherSelect">
+                        <option value="">Select a publisher artist</option>
+                        <!-- Artists will be loaded here by playlists.js -->
+                    </select>
                 </div>
 
                 <!-- Submit button -->

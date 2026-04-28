@@ -4,9 +4,6 @@ const cors = require('cors');
 const path = require('path');
 const connectDB = require('./db');
 
-// Load environment variables from .env file
-require('dotenv').config();
-
 // Initialize express app
 const app = express();
 
@@ -41,8 +38,8 @@ app.use('/api/playlists', playlistRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-// Define the port from .env file
-const PORT = process.env.PORT || 3000;
+// Define the port
+const PORT = 3000;
 
 // Start the server
 app.listen(PORT, () => {

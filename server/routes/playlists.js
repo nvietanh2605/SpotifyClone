@@ -7,11 +7,9 @@ const jwt = require('jsonwebtoken');
 const Playlist = require('../models/Playlist');
 const User = require('../models/User');
 
-// Load environment variables
-require('dotenv').config();
+
 
 // ==================== MULTER SETUP ====================
-// Configure storage for playlist images
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads/images/');
@@ -21,7 +19,6 @@ const storage = multer.diskStorage({
     }
 });
 
-// Only allow image files
 const upload = multer({
     storage,
     fileFilter: (req, file, cb) => {
@@ -36,14 +33,13 @@ const upload = multer({
 });
 
 // ==================== MIDDLEWARE ====================
-// Middleware to verify JWT token and check if user is admin
 const verifyAdmin = (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
         return res.status(401).json({ message: 'No token provided' });
     }
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, 'hexagon_secret_key_2024');
         if (decoded.role !== 'admin') {
             return res.status(403).json({ message: 'Access denied. Admins only.' });
         }
@@ -54,14 +50,13 @@ const verifyAdmin = (req, res, next) => {
     }
 };
 
-// Middleware to verify JWT token for any logged in user
 const verifyToken = (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
         return res.status(401).json({ message: 'No token provided' });
     }
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, 'hexagon_secret_key_2024');
         req.user = decoded;
         next();
     } catch (error) {
@@ -72,11 +67,11 @@ const verifyToken = (req, res, next) => {
 // ==================== ROUTES ====================
 
 // GET /api/playlists/public
-// Get all public playlists for the home page (admin created playlists)
 router.get('/public', async (req, res) => {
     try {
         const playlists = await Playlist.find({ isPublic: true })
             .populate('songs')
+            .populate('publisher', 'name profileImage')
             .sort({ createdAt: -1 });
         res.status(200).json(playlists);
     } catch (error) {
@@ -86,7 +81,6 @@ router.get('/public', async (req, res) => {
 });
 
 // GET /api/playlists/my
-// Get all playlists created by the logged in user
 router.get('/my', verifyToken, async (req, res) => {
     try {
         const playlists = await Playlist.find({ createdBy: req.user.id })
@@ -99,7 +93,6 @@ router.get('/my', verifyToken, async (req, res) => {
 });
 
 // GET /api/playlists/saved
-// Get all playlists saved to user's library
 router.get('/saved', verifyToken, async (req, res) => {
     try {
         const user = await User.findById(req.user.id)
@@ -117,15 +110,30 @@ router.get('/saved', verifyToken, async (req, res) => {
     }
 });
 
+// GET /api/playlists/admin
+// Get all playlists created by admin
+router.get('/admin', verifyAdmin, async (req, res) => {
+    try {
+        const playlists = await Playlist.find({ type: 'admin' })
+            .populate('songs')
+            .populate('publisher', 'name profileImage')
+            .sort({ createdAt: -1 });
+        res.status(200).json(playlists);
+    } catch (error) {
+        console.error('Get admin playlists error:', error.message);
+        res.status(500).json({ message: 'Server error while fetching admin playlists' });
+    }
+});
+
 // GET /api/playlists/:id
-// Get a single playlist by ID
 router.get('/:id', async (req, res) => {
     try {
         const playlist = await Playlist.findById(req.params.id)
             .populate({
                 path: 'songs',
                 populate: { path: 'artist', select: 'name profileImage' }
-            });
+            })
+            .populate('publisher', 'name profileImage');
         if (!playlist) {
             return res.status(404).json({ message: 'Playlist not found' });
         }
@@ -137,30 +145,29 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/playlists
-// Create a new playlist (admin or user)
 router.post('/', verifyToken, upload.single('image'), async (req, res) => {
     try {
-        const { name } = req.body;
+        const { name, publisher } = req.body;
 
-        // Check if playlist name is provided
         if (!name) {
             return res.status(400).json({ message: 'Please provide a playlist name' });
         }
 
-        // Determine if creator is admin or user
         const isAdmin = req.user.role === 'admin';
 
-        // Create new playlist object
+        if (isAdmin && !publisher) {
+            return res.status(400).json({ message: 'Please select a publisher artist' });
+        }
+
         const newPlaylist = new Playlist({
             name,
             image: req.file ? req.file.filename : 'default-playlist.png',
-            createdBy: isAdmin ? null : req.user.id,
+            createdBy: isAdmin ? '000000000000000000000000' : req.user.id,
+            publisher: isAdmin ? publisher : null,
             type: isAdmin ? 'admin' : 'user',
-            // Admin playlists are public, user playlists are private
             isPublic: isAdmin ? true : false
         });
 
-        // Save playlist to database
         await newPlaylist.save();
         res.status(201).json({ message: 'Playlist created successfully', playlist: newPlaylist });
 
@@ -171,7 +178,6 @@ router.post('/', verifyToken, upload.single('image'), async (req, res) => {
 });
 
 // POST /api/playlists/:id/songs
-// Add a song to a playlist
 router.post('/:id/songs', verifyToken, async (req, res) => {
     try {
         const { songId } = req.body;
@@ -181,12 +187,10 @@ router.post('/:id/songs', verifyToken, async (req, res) => {
             return res.status(404).json({ message: 'Playlist not found' });
         }
 
-        // Check if song is already in the playlist
         if (playlist.songs.includes(songId)) {
             return res.status(400).json({ message: 'Song is already in this playlist' });
         }
 
-        // Add song to playlist
         playlist.songs.push(songId);
         await playlist.save();
 
@@ -199,7 +203,6 @@ router.post('/:id/songs', verifyToken, async (req, res) => {
 });
 
 // DELETE /api/playlists/:id/songs/:songId
-// Remove a song from a playlist
 router.delete('/:id/songs/:songId', verifyToken, async (req, res) => {
     try {
         const playlist = await Playlist.findById(req.params.id);
@@ -208,7 +211,6 @@ router.delete('/:id/songs/:songId', verifyToken, async (req, res) => {
             return res.status(404).json({ message: 'Playlist not found' });
         }
 
-        // Remove song from playlist
         playlist.songs = playlist.songs.filter(
             id => id.toString() !== req.params.songId
         );
@@ -223,7 +225,6 @@ router.delete('/:id/songs/:songId', verifyToken, async (req, res) => {
 });
 
 // POST /api/playlists/:id/save
-// Save or unsave a public playlist to user's library
 router.post('/:id/save', verifyToken, async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
@@ -233,18 +234,15 @@ router.post('/:id/save', verifyToken, async (req, res) => {
             return res.status(404).json({ message: 'User or playlist not found' });
         }
 
-        // Check if playlist is already saved
         const isSaved = user.savedPlaylists.includes(req.params.id);
 
         if (isSaved) {
-            // Unsave: remove from saved playlists
             user.savedPlaylists = user.savedPlaylists.filter(
                 id => id.toString() !== req.params.id
             );
             await user.save();
             res.status(200).json({ message: 'Playlist removed from library', isSaved: false });
         } else {
-            // Save: add to saved playlists
             user.savedPlaylists.push(req.params.id);
             await user.save();
             res.status(200).json({ message: 'Playlist added to library', isSaved: true });
@@ -256,8 +254,43 @@ router.post('/:id/save', verifyToken, async (req, res) => {
     }
 });
 
+// PUT /api/playlists/:id
+// Edit a playlist (owner only)
+router.put('/:id', verifyToken, upload.single('image'), async (req, res) => {
+    try {
+        const { name } = req.body;
+        const playlist = await Playlist.findById(req.params.id);
+
+        if (!playlist) {
+            return res.status(404).json({ message: 'Playlist not found' });
+        }
+
+        // Allow admin to edit any playlist, users can only edit their own
+        if (req.user.role !== 'admin' && playlist.createdBy.toString() !== req.user.id) {
+            return res.status(403).json({ message: 'You can only edit your own playlists' });
+        }
+
+        // Update name if provided
+        if (name) playlist.name = name;
+
+        // Update publisher if provided (admin only)
+        const { publisher } = req.body;
+        if (publisher && req.user.role === 'admin') playlist.publisher = publisher;
+
+        // Update image if a new one was uploaded
+        if (req.file) playlist.image = req.file.filename;
+
+        await playlist.save();
+        res.status(200).json({ message: 'Playlist updated successfully', playlist });
+
+    } catch (error) {
+        console.error('Edit playlist error:', error.message);
+        res.status(500).json({ message: 'Server error while editing playlist' });
+    }
+});
+
 // DELETE /api/playlists/:id
-// Delete a playlist (admin or playlist owner only)
+// Delete a playlist (owner only)
 router.delete('/:id', verifyToken, async (req, res) => {
     try {
         const playlist = await Playlist.findById(req.params.id);
@@ -276,5 +309,5 @@ router.delete('/:id', verifyToken, async (req, res) => {
     }
 });
 
-// Export the router so server.js can use it
+// Export the router
 module.exports = router;

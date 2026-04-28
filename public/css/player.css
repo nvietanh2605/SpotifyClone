@@ -1,5 +1,4 @@
 /* ==================== MUSIC PLAYER BAR ==================== */
-/* Fixed bar at the bottom of the screen */
 .player {
     grid-area: player;
     background-color: #181818;
@@ -73,48 +72,89 @@
     max-width: 600px;
 }
 
-/* Play, pause, skip buttons */
+/* Control buttons row */
 .player-controls {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 20px;
 }
 
+/* Skip previous and next buttons */
 .control-btn {
     background: none;
     border: none;
     color: #b3b3b3;
     cursor: pointer;
-    font-size: 20px;
-    transition: color 0.2s, transform 0.1s;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: color 0.2s, transform 0.1s;
+    padding: 0;
 }
 
 .control-btn:hover {
     color: #ffffff;
-    transform: scale(1.05);
+    transform: scale(1.1);
 }
 
-/* Play/pause button is larger than other buttons */
+/* Loop button - highlights green when active */
+.loop-btn {
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, transform 0.1s;
+    padding: 0;
+    position: relative;
+}
+
+.loop-btn:hover {
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+/* Green dot indicator under loop button when active */
+.loop-btn.active {
+    color: #1db954;
+}
+
+.loop-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background-color: #1db954;
+    border-radius: 50%;
+}
+
+/* Play/pause button - large white circle */
 .play-btn {
     background-color: #ffffff;
     border: none;
     border-radius: 50%;
     color: #000000;
     cursor: pointer;
-    font-size: 16px;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: transform 0.1s, background-color 0.2s;
+    padding: 0;
 }
 
 .play-btn:hover {
-    transform: scale(1.05);
+    transform: scale(1.06);
     background-color: #f0f0f0;
 }
 
@@ -133,7 +173,7 @@
     text-align: center;
 }
 
-/* The progress bar track */
+/* Progress bar track */
 .progress-bar {
     flex: 1;
     height: 4px;
@@ -148,7 +188,7 @@
     height: 6px;
 }
 
-/* The filled part of the progress bar */
+/* Filled part of progress bar */
 .progress-fill {
     height: 100%;
     background-color: #ffffff;
@@ -175,7 +215,12 @@
     border: none;
     color: #b3b3b3;
     cursor: pointer;
-    font-size: 18px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
     transition: color 0.2s;
 }
 
@@ -191,6 +236,7 @@
     border-radius: 2px;
     cursor: pointer;
     position: relative;
+    transition: height 0.1s;
 }
 
 .volume-bar:hover {
@@ -209,7 +255,6 @@
 }
 
 /* ==================== EMPTY PLAYER STATE ==================== */
-/* Shown when no song is selected */
 .player-empty {
     color: #b3b3b3;
     font-size: 13px;

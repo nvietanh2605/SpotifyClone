@@ -4,8 +4,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Load environment variables
-require('dotenv').config();
+
 
 // ==================== REGISTER ROUTE ====================
 // POST /api/auth/register
@@ -61,13 +60,12 @@ router.post('/login', async (req, res) => {
 
         // Check if the email belongs to admin
         if (
-            email === process.env.ADMIN_EMAIL &&
-            password === process.env.ADMIN_PASSWORD
+            email === 'admin001@gmail.com' && password === 'Adm1n001'
         ) {
             // Create a JWT token for admin
             const token = jwt.sign(
                 { email: email, role: 'admin' },
-                process.env.JWT_SECRET,
+                'hexagon_secret_key_2024',
                 { expiresIn: '1d' }
             );
 
@@ -95,7 +93,7 @@ router.post('/login', async (req, res) => {
         // Create a JWT token for the user
         const token = jwt.sign(
             { id: user._id, role: 'user' },
-            process.env.JWT_SECRET,
+            'hexagon_secret_key_2024',
             { expiresIn: '1d' }
         );
 

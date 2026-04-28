@@ -4,8 +4,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const Notification = require('../models/Notification');
 
-// Load environment variables
-require('dotenv').config();
+
 
 // ==================== MIDDLEWARE ====================
 // Middleware to verify JWT token for any logged in user
@@ -15,7 +14,7 @@ const verifyToken = (req, res, next) => {
         return res.status(401).json({ message: 'No token provided' });
     }
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, 'hexagon_secret_key_2024');
         req.user = decoded;
         next();
     } catch (error) {

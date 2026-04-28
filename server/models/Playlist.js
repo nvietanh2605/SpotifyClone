@@ -26,7 +26,14 @@ const playlistSchema = new mongoose.Schema({
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: false
+    },
+
+    // Artist who published this playlist (admin playlists only)
+    publisher: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Artist',
+        default: null
     },
 
     // Type of playlist - admin created or user created

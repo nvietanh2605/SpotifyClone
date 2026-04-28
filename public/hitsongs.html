@@ -3,9 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hexagon - Home</title>
+    <title>Hexagon - Hit Songs</title>
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/player.css">
+    <style>
+        .hitsongs-header { display: flex; align-items: flex-end; gap: 24px; padding: 24px; background: linear-gradient(180deg, #1a472a 0%, #121212 100%); min-height: 280px; }
+        .hitsongs-cover { width: 160px; height: 160px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; border-radius: 4px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.5); flex-shrink: 0; }
+        .hitsongs-cover img { width: 100%; height: 100%; object-fit: cover; }
+        .hitsongs-header-info { display: flex; flex-direction: column; gap: 8px; }
+        .hitsongs-header-info .type-label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #ffffff; }
+        .hitsongs-header-info h1 { font-size: 48px; font-weight: 700; color: #ffffff; line-height: 1; }
+        .hitsongs-header-info .subtitle { font-size: 14px; color: #b3b3b3; }
+        .hitsongs-content { padding: 24px; }
+        .song-row { display: flex; align-items: center; gap: 16px; padding: 8px 12px; border-radius: 4px; cursor: pointer; transition: background-color 0.2s; }
+        .song-row:hover { background-color: #282828; }
+        .song-rank { font-size: 16px; color: #b3b3b3; width: 24px; text-align: center; flex-shrink: 0; }
+        .song-row img { width: 48px; height: 48px; border-radius: 4px; object-fit: cover; flex-shrink: 0; }
+        .song-row .song-info { flex: 1; overflow: hidden; }
+        .song-row .song-name { font-size: 14px; font-weight: 600; color: #ffffff; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .song-row .song-artist { font-size: 12px; color: #b3b3b3; }
+        .song-row .song-streams { font-size: 12px; color: #b3b3b3; flex-shrink: 0; }
+    </style>
 </head>
 <body>
 
@@ -75,17 +93,19 @@
     <!-- ==================== MAIN CONTENT ==================== -->
     <main class="main-content">
 
-        <!-- Home page content -->
-        <div class="home-content">
+        <!-- Hit Songs header -->
+        <div class="hitsongs-header">
+            <div class="hitsongs-cover" id="hitSongsCover"></div>
+            <div class="hitsongs-header-info">
+                <span class="type-label">Auto-updated Playlist</span>
+                <h1>Hit Songs</h1>
+                <span class="subtitle" id="hitSongsSubtitle">Loading...</span>
+            </div>
+        </div>
 
-            <!-- Hit Songs section -->
-            <h2 class="section-title">Hit Songs</h2>
-            <div class="cards-grid" id="hitSongsGrid"></div>
-
-            <!-- Featured Playlists section -->
-            <h2 class="section-title">Featured Playlists</h2>
-            <div class="cards-grid" id="featuredPlaylistsGrid"></div>
-
+        <!-- Songs list -->
+        <div class="hitsongs-content">
+            <div id="hitSongsList"></div>
         </div>
 
     </main>
@@ -161,79 +181,61 @@
     <script src="js/library.js"></script>
     <script src="js/notifications.js"></script>
     <script>
-        // ==================== HOME PAGE LOGIC ====================
         const token = localStorage.getItem('token');
 
-        // ==================== LOAD HIT SONGS ====================
         const loadHitSongs = async () => {
             try {
                 const response = await fetch('/api/songs/top');
                 const songs = await response.json();
-                const grid = document.getElementById('hitSongsGrid');
-                grid.innerHTML = '';
                 if (songs.length === 0) return;
 
-                const card = document.createElement('a');
-                card.classList.add('card', 'hit-songs-card');
-                card.href = 'hitsongs.html';
+                const coverDiv = document.getElementById('hitSongsCover');
+                songs.slice(0, 4).forEach(song => {
+                    const img = document.createElement('img');
+                    img.src = song.image !== 'default-song.png'
+                        ? '/uploads/images/' + song.image
+                        : '/uploads/images/default-song.png';
+                    img.alt = song.name;
+                    img.onerror = () => { img.src = '/uploads/images/default-song.png'; };
+                    coverDiv.appendChild(img);
+                });
 
-                const images = songs.slice(0, 4).map(song =>
-                    `<img
-                        src="${song.image !== 'default-song.png' ? '/uploads/images/' + song.image : '/uploads/images/default-song.png'}"
-                        alt="${song.name}"
-                        onerror="this.src='/uploads/images/default-song.png'"
-                    />`
-                ).join('');
+                document.getElementById('hitSongsSubtitle').textContent =
+                    `Top ${songs.length} most streamed songs · Auto-updated`;
 
-                card.innerHTML = `
-                    <div class="hit-songs-cover">${images}</div>
-                    <div class="card-name">Hit Songs</div>
-                    <div class="card-desc">Top ${songs.length} most streamed songs</div>
-                `;
-                grid.appendChild(card);
+                const songsList = document.getElementById('hitSongsList');
+                songs.forEach((song, index) => {
+                    const row = document.createElement('div');
+                    row.classList.add('song-row');
+                    row.innerHTML = `
+                        <span class="song-rank">${index + 1}</span>
+                        <img
+                            src="${song.image !== 'default-song.png' ? '/uploads/images/' + song.image : '/uploads/images/default-song.png'}"
+                            alt="${song.name}"
+                            onerror="this.src='/uploads/images/default-song.png'"
+                        />
+                        <div class="song-info">
+                            <div class="song-name">${song.name}</div>
+                            <div class="song-artist">${song.artist ? song.artist.name : 'Unknown'}</div>
+                        </div>
+                        <div class="song-streams">${song.streamCount.toLocaleString()} streams</div>
+                    `;
+                    row.addEventListener('click', () => {
+                        if (!token) {
+                            document.getElementById('loginWallOverlay').classList.add('visible');
+                            return;
+                        }
+                        window.playSong(song, songs);
+                    });
+                    songsList.appendChild(row);
+                });
 
             } catch (error) {
                 console.error('Failed to load hit songs:', error);
             }
         };
 
-        // ==================== LOAD FEATURED PLAYLISTS ====================
-        const loadFeaturedPlaylists = async () => {
-            try {
-                const response = await fetch('/api/playlists/public');
-                const playlists = await response.json();
-                const grid = document.getElementById('featuredPlaylistsGrid');
-                grid.innerHTML = '';
-
-                if (playlists.length === 0) {
-                    grid.innerHTML = '<p style="color: #b3b3b3; font-size: 14px;">No featured playlists yet</p>';
-                    return;
-                }
-
-                playlists.forEach(playlist => {
-                    const card = document.createElement('a');
-                    card.classList.add('card');
-                    card.href = `playlist.html?id=${playlist._id}`;
-                    card.innerHTML = `
-                        <img
-                            src="${playlist.image !== 'default-playlist.png' ? '/uploads/images/' + playlist.image : '/uploads/images/default-playlist.png'}"
-                            alt="${playlist.name}"
-                            onerror="this.src='/uploads/images/default-playlist.png'"
-                        />
-                        <div class="card-name">${playlist.name}</div>
-                        <div class="card-desc">${playlist.songs.length} songs</div>
-                    `;
-                    grid.appendChild(card);
-                });
-
-            } catch (error) {
-                console.error('Failed to load featured playlists:', error);
-            }
-        };
-
-        // ==================== INITIALIZE ====================
         loadHitSongs();
-        loadFeaturedPlaylists();
     </script>
 
 </body>

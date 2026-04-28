@@ -7,8 +7,7 @@ const jwt = require('jsonwebtoken');
 const Artist = require('../models/Artist');
 const User = require('../models/User');
 
-// Load environment variables
-require('dotenv').config();
+
 
 // ==================== MULTER SETUP ====================
 // Configure where to store uploaded artist images
@@ -48,7 +47,7 @@ const verifyAdmin = (req, res, next) => {
 
     try {
         // Verify the token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, 'hexagon_secret_key_2024');
 
         // Check if the user is admin
         if (decoded.role !== 'admin') {
@@ -70,7 +69,7 @@ const verifyToken = (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, 'hexagon_secret_key_2024');
         req.user = decoded;
         next();
     } catch (error) {

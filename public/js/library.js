@@ -65,7 +65,6 @@ const loadLibrary = async () => {
         }
 
         // ==================== USER OWN PLAYLISTS ====================
-        // Also load playlists created by the user
         const playlistResponse = await fetch('/api/playlists/my', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -74,7 +73,6 @@ const loadLibrary = async () => {
             const myPlaylists = await playlistResponse.json();
 
             myPlaylists.forEach(playlist => {
-                // Check if playlist is already in saved playlists to avoid duplicates
                 const alreadyShown = data.savedPlaylists &&
                     data.savedPlaylists.some(p => p._id === playlist._id);
 
@@ -115,12 +113,11 @@ const loadLibrary = async () => {
 };
 
 // ==================== NAVBAR SETUP ====================
-// Set up navbar elements that appear on every user page
 const setupNavbar = () => {
     const name = localStorage.getItem('name');
     const token = localStorage.getItem('token');
 
-    // Set user name and avatar initial in navbar
+    // Set user name and avatar
     if (name) {
         const userNameEl = document.getElementById('userName');
         const userAvatarEl = document.getElementById('userAvatar');
@@ -178,9 +175,22 @@ const setupNavbar = () => {
             document.getElementById('notificationDropdown')?.classList.remove('visible');
         }
     });
+
+    // ==================== NAVBAR SEARCH ====================
+    // Redirect to search page when user presses Enter in navbar search bar
+    const navSearchInput = document.getElementById('navSearchInput');
+    if (navSearchInput) {
+        navSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const keyword = navSearchInput.value.trim();
+                if (keyword) {
+                    window.location.href = `search.html?keyword=${encodeURIComponent(keyword)}`;
+                }
+            }
+        });
+    }
 };
 
 // ==================== INITIALIZE ====================
-// Run setup and load library when page loads
 setupNavbar();
 loadLibrary();

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexagon - Edit Playlist</title>
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="admin-navbar">
+        <a href="admin.html" class="logo">HEXAGON</a>
+        <span class="admin-label">Admin Dashboard</span>
+        <button class="logout-btn" id="logoutBtn">Log Out</button>
+    </nav>
+
+    <!-- ==================== LAYOUT ==================== -->
+    <div class="admin-layout">
+
+        <!-- ==================== SIDEBAR ==================== -->
+        <aside class="admin-sidebar">
+            <p class="sidebar-title">Manage</p>
+            <a href="admin.html" class="sidebar-link">Song List</a>
+            <a href="create-artist.html" class="sidebar-link">Create Artist</a>
+            <a href="upload-song.html" class="sidebar-link">Upload Song</a>
+            <a href="create-playlist.html" class="sidebar-link">Create Playlist</a>
+            <a href="playlists.html" class="sidebar-link active">Playlist List</a>
+        </aside>
+
+        <!-- ==================== MAIN CONTENT ==================== -->
+        <main class="admin-main">
+
+            <!-- Page title -->
+            <h1 class="page-title">Edit Playlist</h1>
+
+            <!-- Success and error messages -->
+            <div class="alert alert-success" id="successAlert"></div>
+            <div class="alert alert-error" id="errorAlert"></div>
+
+            <!-- Edit playlist form -->
+            <div class="admin-form">
+
+                <!-- Playlist image -->
+                <div class="form-group">
+                    <label for="playlistImage">Playlist Image</label>
+                    <!-- Current image preview -->
+                    <img class="image-preview visible" id="imagePreview" src="" alt="Current Image"/>
+                    <input type="file" id="playlistImage" accept="image/*" />
+                </div>
+
+                <!-- Playlist name -->
+                <div class="form-group">
+                    <label for="playlistName">Playlist Name</label>
+                    <input type="text" id="playlistName" placeholder="Enter playlist name" />
+                </div>
+
+                <!-- Publisher artist dropdown -->
+                <div class="form-group">
+                    <label for="publisherSelect">Publisher Artist</label>
+                    <select id="publisherSelect">
+                        <option value="">Select a publisher artist</option>
+                    </select>
+                </div>
+
+                <!-- Form buttons -->
+                <div class="action-buttons">
+                    <button class="btn-primary" id="savePlaylistBtn">Save Changes</button>
+                    <a href="playlists.html" class="btn-secondary">Cancel</a>
+                </div>
+
+            </div>
+
+            <!-- ==================== SONGS SECTION ==================== -->
+            <h2 class="page-title" style="margin-top: 32px;">Songs in Playlist</h2>
+
+            <!-- Search bar to add songs -->
+            <div class="search-bar">
+                <input
+                    type="text"
+                    id="songSearchInput"
+                    placeholder="Search songs to add..."
+                />
+                <button id="songSearchBtn">Search</button>
+            </div>
+
+            <!-- Two column layout -->
+            <div class="playlist-builder">
+
+                <!-- Left: search results -->
+                <div class="playlist-search-results">
+                    <h3>Search Results</h3>
+                    <div id="searchResults"></div>
+                </div>
+
+                <!-- Right: current songs in playlist -->
+                <div class="playlist-songs-list">
+                    <h3>Songs in Playlist</h3>
+                    <div id="playlistSongs"></div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="../js/admin/playlistList.js"></script>
+
+</body>
+</html>

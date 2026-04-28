@@ -1,9 +1,9 @@
 // ==================== PLAYER STATE ====================
-// Store the current song and playlist being played
 let currentSong = null;
 let currentPlaylist = [];
 let currentIndex = 0;
 let isPlaying = false;
+let isLooping = false;
 
 // Get the hidden audio element
 const audio = document.getElementById('audioPlayer');
@@ -17,8 +17,22 @@ const formatTime = (seconds) => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
+// ==================== UPDATE PLAY/PAUSE ICONS ====================
+// Switch between play and pause icons
+const updatePlayPauseIcon = (playing) => {
+    const playIcon = document.getElementById('playIcon');
+    const pauseIcon = document.getElementById('pauseIcon');
+    if (!playIcon || !pauseIcon) return;
+    if (playing) {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = 'block';
+    } else {
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+    }
+};
+
 // ==================== PLAY SONG ====================
-// This function is called from any page to play a song
 window.playSong = async (song, playlist = []) => {
     const token = localStorage.getItem('token');
 
@@ -33,12 +47,11 @@ window.playSong = async (song, playlist = []) => {
     currentPlaylist = playlist.length > 0 ? playlist : [song];
     currentIndex = currentPlaylist.findIndex(s => s._id === song._id);
 
-    // Update player UI to show song info
     const playerLeft = document.getElementById('playerLeft');
     const playerCenter = document.getElementById('playerCenter');
     const playerRight = document.getElementById('playerRight');
 
-    // Show song image, name and artist in player left
+    // Show song info in player left section
     playerLeft.innerHTML = `
         <img
             src="${song.image !== 'default-song.png' ? '/uploads/images/' + song.image : '/uploads/images/default-song.png'}"
@@ -60,8 +73,8 @@ window.playSong = async (song, playlist = []) => {
     audio.play();
     isPlaying = true;
 
-    // Update play button to show pause icon
-    document.getElementById('playBtn').innerHTML = '&#9646;&#9646;';
+    // Update play/pause icon to show pause
+    updatePlayPauseIcon(true);
 
     // Increment stream count in the background
     try {
@@ -81,19 +94,17 @@ document.getElementById('playBtn').addEventListener('click', () => {
     if (isPlaying) {
         audio.pause();
         isPlaying = false;
-        document.getElementById('playBtn').innerHTML = '&#9654;';
+        updatePlayPauseIcon(false);
     } else {
         audio.play();
         isPlaying = true;
-        document.getElementById('playBtn').innerHTML = '&#9646;&#9646;';
+        updatePlayPauseIcon(true);
     }
 });
 
 // ==================== PREVIOUS SONG ====================
 document.getElementById('prevBtn').addEventListener('click', () => {
     if (currentPlaylist.length === 0) return;
-
-    // Go to previous song or loop back to last song
     currentIndex = currentIndex > 0 ? currentIndex - 1 : currentPlaylist.length - 1;
     window.playSong(currentPlaylist[currentIndex], currentPlaylist);
 });
@@ -101,66 +112,70 @@ document.getElementById('prevBtn').addEventListener('click', () => {
 // ==================== NEXT SONG ====================
 document.getElementById('nextBtn').addEventListener('click', () => {
     if (currentPlaylist.length === 0) return;
-
-    // Go to next song or loop back to first song
     currentIndex = currentIndex < currentPlaylist.length - 1 ? currentIndex + 1 : 0;
     window.playSong(currentPlaylist[currentIndex], currentPlaylist);
+});
+
+// ==================== LOOP BUTTON ====================
+document.getElementById('loopBtn').addEventListener('click', () => {
+    isLooping = !isLooping;
+    const loopBtn = document.getElementById('loopBtn');
+
+    if (isLooping) {
+        // Activate loop - highlight button green
+        loopBtn.classList.add('active');
+        loopBtn.title = 'Loop on';
+    } else {
+        // Deactivate loop
+        loopBtn.classList.remove('active');
+        loopBtn.title = 'Loop off';
+    }
 });
 
 // ==================== AUTO PLAY NEXT ====================
-// When a song ends, automatically play the next one
+// When song ends, loop current song or play next
 audio.addEventListener('ended', () => {
-    if (currentPlaylist.length === 0) return;
-    currentIndex = currentIndex < currentPlaylist.length - 1 ? currentIndex + 1 : 0;
-    window.playSong(currentPlaylist[currentIndex], currentPlaylist);
+    if (isLooping) {
+        // Loop: replay the same song from the beginning
+        audio.currentTime = 0;
+        audio.play();
+    } else {
+        // No loop: play the next song
+        if (currentPlaylist.length === 0) return;
+        currentIndex = currentIndex < currentPlaylist.length - 1 ? currentIndex + 1 : 0;
+        window.playSong(currentPlaylist[currentIndex], currentPlaylist);
+    }
 });
 
 // ==================== PROGRESS BAR ====================
-// Update progress bar and time as song plays
+// Update progress bar as song plays
 audio.addEventListener('timeupdate', () => {
     if (!audio.duration) return;
-
-    // Calculate progress percentage
     const progress = (audio.currentTime / audio.duration) * 100;
     document.getElementById('progressFill').style.width = `${progress}%`;
-
-    // Update current time display
     document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
     document.getElementById('totalTime').textContent = formatTime(audio.duration);
 });
 
-// Click on progress bar to seek to that position
+// Click on progress bar to seek
 document.getElementById('progressBar').addEventListener('click', (e) => {
     if (!audio.duration) return;
-
-    // Calculate where user clicked on the bar
     const rect = e.currentTarget.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const percentage = clickX / rect.width;
-
-    // Seek to that position in the song
     audio.currentTime = percentage * audio.duration;
 });
 
 // ==================== VOLUME ====================
-// Click on volume bar to change volume
 document.getElementById('volumeBar').addEventListener('click', (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const percentage = clickX / rect.width;
-
-    // Set audio volume (0 to 1)
     audio.volume = percentage;
     document.getElementById('volumeFill').style.width = `${percentage * 100}%`;
 });
 
-// Mute / unmute button
+// Mute / unmute
 document.getElementById('volumeBtn').addEventListener('click', () => {
-    if (audio.muted) {
-        audio.muted = false;
-        document.getElementById('volumeBtn').innerHTML = '&#9836;';
-    } else {
-        audio.muted = true;
-        document.getElementById('volumeBtn').innerHTML = '&#128263;';
-    }
+    audio.muted = !audio.muted;
 });

@@ -9,8 +9,7 @@ const Artist = require('../models/Artist');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
 
-// Load environment variables
-require('dotenv').config();
+
 
 // ==================== MULTER SETUP ====================
 // Configure storage for song images and audio files
@@ -63,7 +62,7 @@ const verifyAdmin = (req, res, next) => {
         return res.status(401).json({ message: 'No token provided' });
     }
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, 'hexagon_secret_key_2024');
         if (decoded.role !== 'admin') {
             return res.status(403).json({ message: 'Access denied. Admins only.' });
         }
@@ -81,7 +80,7 @@ const verifyToken = (req, res, next) => {
         return res.status(401).json({ message: 'No token provided' });
     }
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, 'hexagon_secret_key_2024');
         req.user = decoded;
         next();
     } catch (error) {
